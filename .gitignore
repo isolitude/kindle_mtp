@@ -1,0 +1,11 @@
+*.txt
+config.json
+correction.json
+failed_corrections.json
+filtered_correction.json
+grouped_clippings.json
+pre_correction.json
+*.ipynb
+kindle_notebook_copy.py
+kindle_notebook_mtp.py
+

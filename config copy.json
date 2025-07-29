@@ -1,0 +1,41 @@
+{
+"clippings_to_pre_correction" : {
+    "clipping_json_path" : "grouped_clippings.json",
+    "book_title_in_clipping" : "第三部",
+    "book_path" : "第三部.txt",
+    "locations" : {
+        "start" : 1,
+        "end" : 39000
+    },
+    "search_window_in_percentage" : 0.02,
+    "pre_correction_json_path" : "pre_correction.json"
+},
+"pre_correction_to_correction": {
+    "llm_settings" : {
+        "llm_api_url" : "https://api.easytransnote.com/v1/chat/completions",
+        "llm_model" : "gemini-2.5-flash-preview-05-20",
+        "llm_temperature" : 0.1,
+        "llm_api_key" : "your-api-key-here",
+        "llm_prompt" : "你是一个高度智能、注重细节的中文校对批处理引擎。你的任务是接收一个JSON数组，并对每个任务进行独立的、多维度的校对分析。\n\n请严格遵循以下【核心规则】：\n1.  **独立处理**：数组中的每个对象都是一个独立任务，不要让任务之间互相影响。\n2.  **严格对应**：返回的JSON数组中的每个结果对象，必须通过`id`字段与输入任务一一对应。\n3.  **遵守校对规则**：对于每个任务的「待修正片段」，都需遵守“专注修正”、“忠于原意”、“尊重范围（不补全）”的原则。\n4.  **全局错误扫描**：在校对「待修正片段」的同时，也请审阅整个「上下文句子」。如果句子中存在明显的、但位于「待修正片段」**范围之外**的错误，请将 `error_outside_snippet` 字段设为 `true`。否则（即句子其他地方无错，或错误就在片段内），一律设为 `false`。\n5.  **格式要求**：你的最终输出必须是一个严格的、完整的JSON数组。\n6.  **无错则返**：如果「待修正片段」没有任何错误，请将`is_corrected`字段设为`false`。\n\n【重点校对维度与特殊指令】\n在执行校对时，请特别关注并应用以下细则：\n1. 结构助词“的、地、得”辨析：\n    - 任务：精确审查并修正结构助词“的”、“地”、“得”的误用。\n    - 标准：“的”用于定语后修饰名词；“地”用于状语后修饰动词；“得”用于动词或形容词后连接补语。\n\n2. 常见错别字来源分析：\n    - 任务：识别并修正由常见输入法错误导致的错别字。\n    - 重点关注a (音近致错)：由拼音输入法造成的谐音或近音错误。例如：“在”与“再”；“部署”与“部属”。\n    - 重点关注b (形近致错)：由五笔等形码输入法造成的字形相近错误。例如：“己”与“已”；“戌”与“戍”。\n\n3. 技术性错误处理指令：\n    - 任务：忽略特定的、由程序处理产生的非内容性错误。\n    - 具体指令：若发现前后半角或全角引号（\" \" 或 “ ”）不匹配，且明显是由程序断句或片段截取造成的，请忽略此问题，不要将其视为需要修正的错误。\n---\n\n【输入任务列表 (JSON数组)】\nINPUT_TASKS_JSON_STRING\n\n---\n\n【输出结果列表 (JSON数组)】\n请根据上述要求，返回一个JSON数组，每个对象必须包含以下所有字段：\n- `id`: 字符串(string)，与输入任务对应。\n- `is_corrected`: 布尔值(boolean)，表示「待修正片段」本身是否被修正。\n- `error_outside_snippet`: 布尔值(boolean)，表示在「待修正片段」范围之外的上下文中是否发现错误。\n- `original_text`: 字符串(string)，原始的待修正片段。\n- `corrected_text`: 字符串(string)，修正后的文本片段。\n- `explanation`: 字符串(string)，简要说明所有发现。如果`error_outside_snippet`为true，请在此字段中说明在句子何处发现了何种错误。\n",
+        "task_per_request" : 20
+
+    },
+    "llm_settings_2": {
+        "llm_api_url" : "https://api.easytransnote.com/v1/chat/completions",
+        "llm_model" : "gemini-2.5-flash-preview-05-20",
+        "llm_temperature" : 0.1,
+        "llm_api_key" : "your-api-key-here",
+        "llm_prompt" : "你是一个高度智能、注重细节的中文校对批处理引擎。你的任务是接收一个JSON数组，并对每个任务进行独立的、基于修正说明的校对。\n\n请严格遵循以下【核心规则】：\n\n1.  **独立处理**：数组中的每个对象都是一个独立任务，其处理过程不受其他任务影响。\n2.  **严格对应**：返回的JSON数组中的每个结果对象，必须通过 `id` 字段与输入任务一一对应。\n3.  **指令驱动修正**：对于每个任务，你必须严格依据其 \"explanation\" 字段的说明来修正 \"text\" 文本。不得进行任何 \"explanation\" 中未提及的修改。\n4.  **忠于原意**：在修正时，必须最大限度地保留原始文本的意图。\n5.  **格式要求**：你的最终输出必须是一个严格的、完整的JSON数组。\n6.  **无错则返**：如果一个任务的 \"text\" 无需修正，请将该任务的 `is_corrected` 字段设为 `false`，并确保 `corrected_text` 与 `original_text` 内容完全相同。\n\n---\n【输入任务列表 (JSON数组)】\nINPUT_TASKS_JSON_STRING\n\n---\n【输出结果列表 (JSON数组)】\n请根据上述要求，返回一个JSON数组，每个对象必须包含以下所有字段：\n- `id`: 字符串(string)，与输入任务对应。\n- `is_corrected`: 布尔值(boolean)，表示「待修正片段」本身是否被修正。\n- `original_text`: 字符串(string)，原始的待修正片段。\n- `corrected_text`: 字符串(string)，修正后的文本片段。\n",
+        "task_per_request" : 10 
+    },
+    "pre_correction_json_path" : "pre_correction.json",
+    "correction_json_path" : "correction.json",
+    "re_correction_enabled" : true
+    
+},
+"correction_apply" : {
+    "correction_json_path" : "correction.json",
+    "book_path" : "第三部.txt",
+    "output_path" : "第三部_corrected.txt"
+}
+}
