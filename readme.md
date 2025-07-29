@@ -40,7 +40,7 @@ Kindle\_get\_clipping.py需要安装mtp库，具体的安装教程在附录，�
 ### clippings_to_pre_correction
 
 ```json
-
+{
 "clippings_to_pre_correction" : {
     "clipping_json_path" : "grouped_clippings.json",
     "book_title_in_clipping" : "第三部",
@@ -52,7 +52,7 @@ Kindle\_get\_clipping.py需要安装mtp库，具体的安装教程在附录，�
     "search_window_in_percentage" : 0.02,
     "pre_correction_json_path" : "pre_correction.json"
 }
- 
+} 
 ```
 
 该字段对应的是查找到对应的标注所在txt文本中的位置，以及其所在的句子和对应的段落。
@@ -72,7 +72,7 @@ Kindle\_get\_clipping.py需要安装mtp库，具体的安装教程在附录，�
 ### pre_correction_to_correction
 
 ```json
-
+{
 "pre_correction_to_correction": {
     "llm_settings" : {
         "llm_api_url" : "https://api.easytransnote.com/v1/chat/completions",
@@ -87,13 +87,14 @@ Kindle\_get\_clipping.py需要安装mtp库，具体的安装教程在附录，�
         "llm_model" : "gemini-2.5-flash-preview-05-20",
         "llm_temperature" : 0.1,
         "llm_api_key" : "your key",
-       `        "llm_prompt" : "your prompt 2",
+        "llm_prompt" : "your prompt 2",
         "task_per_request" : 10 
     },
     "pre_correction_json_path" : "pre_correction.json",
     "correction_json_path" : "correction.json",
     "re_correction_enabled" : true
     
+}
 }
 ```
 
@@ -126,10 +127,12 @@ re_correction_enabled 一般来说，llm返回会有各种报错，会尝试再�
 ### correction_apply
 
 ```json
+{
 "correction_apply" : {
     "correction_json_path" : "correction.json",
     "book_path" : "第三部.txt",
     "output_path" : "第三部_corrected.txt"
+}
 }
 ```
 
